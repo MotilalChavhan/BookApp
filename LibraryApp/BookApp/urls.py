@@ -5,5 +5,6 @@ urlpatterns = [
 	path("", views.landing, name="landing"),
 	path("addbooks", views.addbooks, name="addbooks"),
 	path("addmembers", views.addmembers, name="addmembers"),
-	path("issuebooks", views.issuebooks, name="issuebooks")
+	path("issuebooks", views.issuebooks, name="issuebooks"),
+	path("getbooks", views.getbooks, name="getbooks")
 ]

@@ -6,7 +6,6 @@ class Book(models.Model):
 	authors = models.CharField(max_length=256)
 	isbn = models.CharField(max_length=128)
 	publisher = models.CharField(max_length=256)
-	page = models.CharField(max_length=10)
 	issued = models.BooleanField(default=False)
 
 class User(AbstractUser):
