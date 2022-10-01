@@ -125,4 +125,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Added changes
-AUTH_USER_MODEL = 'BookApp.User'
+# AUTH_USER_MODEL = 'BookApp.User'

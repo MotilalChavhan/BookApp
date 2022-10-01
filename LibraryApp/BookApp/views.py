@@ -1,8 +1,9 @@
 import json
 import requests
-from .models import User, Book
+from .models import Member, Book
 from django.urls import reverse
 from django.shortcuts import render
+from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 def landing(request):
@@ -20,7 +21,7 @@ def getbooks(request):
 		"authors" : request.POST['authors'],
 		"isbn" : request.POST['isbn'],
 		"publisher" : request.POST['publisher'],
-		"page" : request.POST['page'] 
+		"page" : request.POST['page']
 	}
 	response = requests.request("POST", url, json=payload)
 	
@@ -59,6 +60,32 @@ def addbooks(request):
 		return JsonResponse({"status" : "fail", "message" : "Internal Server Error"})
 
 def addmembers(request):
+	if request.method == "POST":
+		first_name = request.POST['first_name'].strip()
+		last_name = request.POST['last_name'].strip()
+		username = request.POST['username'].strip()
+		email = request.POST['email'].strip()
+
+		# Checking if any field is blank
+		if len(first_name) == 0 or len(last_name) == 0 or len(username) == 0 or len(email) == 0:
+			return render(request, "members_view.html", {
+				"status" : "fail",
+				"message" : "Don't leave any field blank."
+			})
+
+		# adding a member in database
+		try:
+			Member.objects.create(first_name=first_name, last_name=last_name, username=username, email=email)
+		except IntegrityError:
+			return render(request, "members_view.html", {
+				"status" : "fail",
+				"message" : "username/email already exists. Enter a different username/email."
+			})
+
+		return render(request, "members_view.html", {
+			"status" : "success",
+			"message" : "You have successfully added a new member in your database."
+		})
 	return render(request, "members_view.html")
 
 def issuebooks(request):

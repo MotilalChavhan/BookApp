@@ -43,25 +43,4 @@ document.querySelector('#addbooks').addEventListener('click', () => {
         }
         alert(res.data.message, res.data.status);
     })
-    // let loading_animation = `<div id="customLoad" class="fa-4x d-flex justify-content-center align-items-center"
-    // style="height: 100%; visibility: hidden;">
-    // <i class="fas fa-sync fa-spin"></i>
-    // </div>`;
-    // document.querySelector('#customOut').innerHTML = loading_animation;
-    // document.querySelector('#customLoad').style.visibility = "visible";
-    
-    // let imageURL = document.querySelector('#imageURL').value;
-    // let img = '<img width= "100%" src="' + imageURL + '">';
-    // let callURL = `${document.location.protocol}//${document.location.host}/imgtotext`;
-    // axios.post(callURL, {
-    //     "imageURL": imageURL
-    // }).then(res => {
-    //     document.querySelector('#customOut').innerHTML = "Custom Output...";
-    //     if (res.data.status == 'fail') {
-    //         swal("Uh Oh!", res.data.text, "error");
-    //         return;
-    //     }
-    //     editor.getDoc().setValue(res.data.text);
-    //     document.querySelector('#image').innerHTML = img;
-    // })
 })

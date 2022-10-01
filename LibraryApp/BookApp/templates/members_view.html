@@ -1,1 +1,75 @@
 {% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<center>
+  <!-- alert message -->
+  <div class="align-items-center" id="liveAlertPlaceholder"></div>
+  <h1>Add Members</h1>
+  <br>
+
+  <div class="card" style="width: 50%;">
+    <img src="https://as1.ftcdn.net/v2/jpg/05/30/78/48/1000_F_530784876_tVVLgkCNenjbjs8nNIucVZDN9YLoePdI.jpg" class="card-img-top" alt="book shelf image">
+    <div class="card-body">
+      <form action="{% url 'addmembers' %}" method="post" class="row g-3">
+          {% csrf_token %}
+          <div class="col-sm-6">
+            <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+          </div>
+
+          <div class="col-sm-6">
+            <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
+          </div>
+
+          <div class="col-sm-12">
+            <input type="text" class="form-control" name="username" placeholder="Username" required>
+          </div>
+
+          <div class="col-sm-12">
+            <input type="email" class="form-control" name="email" placeholder="Email" required>
+          </div>
+
+          <div class="col-sm-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-success" id="addmembers">Add a member</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</center>
+<!-- 
+<script type="text/javascript" src="{% static 'members_view.js' %}"></script> -->
+{% if not status %}
+<script>
+  const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+
+  const alert = (message, type) => {
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = [
+      `<div class="alert alert-${type} alert-dismissible d-flex align-items-center" role="alert">`,
+      `   <div>${message}</div>`,
+      '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+      '</div>'
+    ].join('')
+
+    alertPlaceholder.append(wrapper);
+  }
+
+  document.querySelector('#addmembers').addEventListener('click',(e) => {
+    // console.log(status);
+    // e.preventDefault();
+    let status = "{{ status }}";
+    let message = "{{ message }}";
+    if (status === 'fail') {
+      alert(message, 'danger');
+    }
+    else {
+      alert(message, status);
+    }
+  })
+</script>
+{% endif %}
+{% endblock %}
+
+<!-- for goood looking alerts -->
+<!-- https://lipis.github.io/bootstrap-sweetalert/ -->
