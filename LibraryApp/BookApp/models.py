@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 class Member(models.Model):
@@ -18,3 +19,14 @@ class Book(models.Model):
 
 	def __str__(self):
 		return self.title
+
+class Transaction(models.Model):
+	member = models.ForeignKey(Member, on_delete=models.PROTECT)
+	book = models.ForeignKey(Book, on_delete=models.PROTECT)
+	date = models.DateField(default=datetime.date.today)
+	action = models.CharField(max_length=20)
+
+	def __str__(self):
+		if action == 'issue':
+			return f"{self.member.username} issued {self.book.title}"
+		return f"{self.member.username} issued {self.book.title}"
