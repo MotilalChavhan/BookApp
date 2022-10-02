@@ -102,11 +102,30 @@ def issuebooks(request):
 			messages.error(request, "Don't leave any field blank.")
 			return render(request, "issue_books.html")
 
-		member = Member.objects.get(username=username)
-		book = Book.objects.filter(isbn=isbn, member=None)[0]
+		# validating if member exists or not
+		try:
+			member = Member.objects.get(username=username)
+		except:
+			messages.error(request, "Member does not exists.")
+			return render(request, "issue_books.html")
+
+		# checking if books are available in database to issue 	
+		try:
+			book = Book.objects.filter(isbn=isbn, member=None)[0]
+		except:
+			messages.error(request, f"No books with {isbn} number are available in database.")
+			return render(request, "issue_books.html")
+		
+		# assigning this book to the given member
 		book.member = member
 		book.save()
-		Transaction.objects.create(member=member, book=book, action="issue")
+
+		# validating if transactions doesn't happen
+		try:
+			Transaction.objects.create(member=member, book=book, action="issue")
+		except IntegrityError:
+			messages.error(request, "Transaction did not complete. Try again!")
+			return render(request, "issue_books.html")
 
 		messages.success(request, f"{username} issued the book successfully.")
 		return render(request, "issue_books.html")
