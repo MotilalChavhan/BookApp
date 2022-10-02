@@ -5,7 +5,23 @@
 
 <center>
   <!-- alert message -->
-  <div class="align-items-center" id="liveAlertPlaceholder"></div>
+  {% if messages %}
+    {% for message in messages %}
+      <!-- <div class="container-fluid p-0">
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+          {{ message }}
+        </div>
+      </div> -->
+      <div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+        <div>{{ message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+  <!-- <div class="align-items-center" id="liveAlertPlaceholder"></div> -->
   <h1>Add Members</h1>
   <br>
 
@@ -27,7 +43,7 @@
           </div>
 
           <div class="col-sm-12">
-            <input type="email" class="form-control" name="email" placeholder="Email" required>
+            <input type="text" class="form-control" name="email" placeholder="Email" required>
           </div>
 
           <div class="col-sm-12 d-flex justify-content-end">
@@ -39,8 +55,8 @@
 </center>
 <!-- 
 <script type="text/javascript" src="{% static 'members_view.js' %}"></script> -->
-{% if not status %}
-<script>
+<!-- {% if status %} -->
+<!-- <script>
   const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
 
   const alert = (message, type) => {
@@ -55,20 +71,22 @@
     alertPlaceholder.append(wrapper);
   }
 
-  document.querySelector('#addmembers').addEventListener('click',(e) => {
-    // console.log(status);
-    // e.preventDefault();
-    let status = "{{ status }}";
-    let message = "{{ message }}";
-    if (status === 'fail') {
-      alert(message, 'danger');
-    }
-    else {
-      alert(message, status);
-    }
-  })
-</script>
-{% endif %}
+  const validation = () => {
+    document.querySelector('#addmembers').addEventListener('click',(e) => {
+      let status = "{{ status }}";
+      let message = "{{ message }}";
+      if (status === 'fail') {
+        alert(message, 'danger');
+      }
+      else {
+        alert(message, status);
+      }
+      // e.preventDefault();
+    })
+  }
+  setTimeout(validation, 500);
+</script> -->
+<!-- {% endif %} -->
 {% endblock %}
 
 <!-- for goood looking alerts -->

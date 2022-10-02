@@ -3,7 +3,10 @@ import requests
 from .models import Member, Book
 from django.urls import reverse
 from django.shortcuts import render
+from django.contrib import messages
 from django.db import IntegrityError
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 def landing(request):
@@ -72,20 +75,23 @@ def addmembers(request):
 				"status" : "fail",
 				"message" : "Don't leave any field blank."
 			})
+		
+		# Validating email
+		try:
+			validate_email(email)
+		except ValidationError:
+			messages.error(request, "Enter a valid email.")
+			return render(request, "members_view.html")
 
 		# adding a member in database
 		try:
 			Member.objects.create(first_name=first_name, last_name=last_name, username=username, email=email)
 		except IntegrityError:
-			return render(request, "members_view.html", {
-				"status" : "fail",
-				"message" : "username/email already exists. Enter a different username/email."
-			})
+			messages.error(request, "username/email already exists. Enter a different username/email.")
+			return render(request, "members_view.html")
 
-		return render(request, "members_view.html", {
-			"status" : "success",
-			"message" : "You have successfully added a new member in your database."
-		})
+		messages.success(request, "You have successfully added a new member in your database.")
+		return render(request, "members_view.html")
 	return render(request, "members_view.html")
 
 def issuebooks(request):
