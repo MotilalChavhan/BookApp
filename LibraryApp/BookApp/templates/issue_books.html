@@ -3,12 +3,21 @@
 {% block body %}
 
 <center>
+	<!-- alert message -->
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+				<div>{{ message }}</div>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endfor %}
+	{% endif %}
 	<h2>Issue a book</h2>
 	<br>
 	<div class="card" style="width: 50%;">
 	    <div class="card-body">
 			<form action="{% url 'issuebooks' %}" method="post" class="row g-3">
-			  	{% csrf_token %}
+			  {% csrf_token %}
 				<div class="col-sm-12">
 					<input type="text" class="form-control" name="username" placeholder="Username" required>
 				</div>

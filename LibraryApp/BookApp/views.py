@@ -1,6 +1,6 @@
 import json
 import requests
-from .models import Member, Book
+from .models import Member, Book, Transaction
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib import messages
@@ -93,6 +93,22 @@ def addmembers(request):
 	return render(request, "members_view.html")
 
 def issuebooks(request):
-	
+	if request.method == "POST":
+		username = request.POST['username'].strip()
+		isbn = request.POST['isbn'].strip()
+
+		# Checking if any field is blank
+		if len(username) == 0 or len(isbn) == 0:
+			messages.error(request, "Don't leave any field blank.")
+			return render(request, "issue_books.html")
+
+		member = Member.objects.get(username=username)
+		book = Book.objects.filter(isbn=isbn, member=None)[0]
+		book.member = member
+		book.save()
+		Transaction.objects.create(member=member, book=book, action="issue")
+
+		messages.success(request, f"{username} issued the book successfully.")
+		return render(request, "issue_books.html")
 
 	return render(request, "issue_books.html")

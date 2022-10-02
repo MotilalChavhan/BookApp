@@ -27,6 +27,6 @@ class Transaction(models.Model):
 	action = models.CharField(max_length=20)
 
 	def __str__(self):
-		if action == 'issue':
+		if self.action == 'issue':
 			return f"{self.member.username} issued {self.book.title}"
 		return f"{self.member.username} issued {self.book.title}"
