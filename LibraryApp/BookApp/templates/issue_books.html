@@ -1,1 +1,49 @@
 {% extends "layout.html" %}
+
+{% block body %}
+
+<center>
+	<h2>Issue a book</h2>
+	<br>
+	<div class="card" style="width: 50%;">
+	    <div class="card-body">
+			<form action="{% url 'issuebooks' %}" method="post" class="row g-3">
+			  	{% csrf_token %}
+				<div class="col-sm-12">
+					<input type="text" class="form-control" name="username" placeholder="Username" required>
+				</div>
+
+				<div class="col-sm-12">
+					<input type="text" class="form-control" name="isbn" placeholder="Book ISBN" required>
+				</div>
+				<div class="col-sm-12 d-flex justify-content-end">
+					<button type="submit" class="btn btn-success" id="addmembers">Issue book</button>
+				</div>
+			</form>
+	    </div>
+	</div>
+	<!-- <br>
+	<br>
+	<br>
+	<h2>Return a book</h2>
+	<br>
+	<div class="card" style="width: 50%;">
+	    <div class="card-body">
+			<form action="{% url 'addmembers' %}" method="post" class="row g-3">
+			  	{% csrf_token %}
+				<div class="col-sm-12">
+					<input type="text" class="form-control" name="username" placeholder="Username" required>
+				</div>
+
+				<div class="col-sm-12">
+					<input type="text" class="form-control" name="isbn" placeholder="Book ISBN" required>
+				</div>
+				<div class="col-sm-12 d-flex justify-content-end">
+					<button type="submit" class="btn btn-success" id="addmembers">Return book</button>
+				</div>
+			</form>
+	    </div>
+	</div> -->
+</center>
+
+{% endblock %}

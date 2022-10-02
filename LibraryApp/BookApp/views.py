@@ -71,10 +71,8 @@ def addmembers(request):
 
 		# Checking if any field is blank
 		if len(first_name) == 0 or len(last_name) == 0 or len(username) == 0 or len(email) == 0:
-			return render(request, "members_view.html", {
-				"status" : "fail",
-				"message" : "Don't leave any field blank."
-			})
+			messages.error(request, "Don't leave any field blank.")
+			return render(request, "members_view.html")
 		
 		# Validating email
 		try:
@@ -95,4 +93,6 @@ def addmembers(request):
 	return render(request, "members_view.html")
 
 def issuebooks(request):
+	
+
 	return render(request, "issue_books.html")
