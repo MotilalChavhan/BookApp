@@ -100,7 +100,7 @@ def issuebooks(request):
 
 		# Checking if any field is blank
 		if len(username) == 0 or len(isbn) == 0:
-			messages.error(request, "Don't leave any field blank.")
+			messages.error(request, "Don't leave any fields blank.")
 			return render(request, "issue_books.html")
 
 		# validating if member exists or not
@@ -122,10 +122,10 @@ def issuebooks(request):
 		issued_books = member.book_set.all() # getting all the issued books by the member
 		for ib in issued_books:
 			issue_date = Transaction.objects.get(member=member, book=ib, action="issue").date
-			debt += (datetime.date.today() - issue_date).days * 5 # changes per day for a book is 5 ruppees
+			debt += (datetime.date.today() - issue_date).days * 5 # charges per day for a book is 5
 			if debt >= 500:
 				messages.error(request, 
-					f"{username}'s outstanding debt higher than 500 ruppees. To issue the book please return/re-issue the books that are already issued")
+					f"{username}'s outstanding debt higher than 500. To issue the book please return/re-issue the books that are already issued")
 				return render(request, "issue_books.html")
 
 		# assigning this book to the given member
@@ -140,6 +140,47 @@ def issuebooks(request):
 			return render(request, "issue_books.html")
 
 		messages.success(request, f"{username} issued the book successfully.")
-		return render(request, "issue_books.html")
+
+	return render(request, "issue_books.html")
+
+def returnbooks(request):
+	if request.method == "POST":
+		username = request.POST['username'].strip()
+		bookID = request.POST['bookID'].strip()
+
+		# Checking if any field is blank
+		if len(username) == 0 or len(bookID) == 0:
+			messages.error(request, "Don't leave any fields blank.")
+			return render(request, "issue_books.html")
+
+		# validating if member exists or not
+		try:
+			member = Member.objects.get(username=username)
+		except:
+			messages.error(request, "Member does not exists.")
+			return render(request, "issue_books.html")
+		
+		# checking if book exists or not and if member has issued this book or not
+		try:
+			book = Book.objects.get(pk=bookID, member=member)
+		except:
+			messages.error(request, "Book does not exists. (This can also occur if member has not issued this book)")
+			return render(request, "issue_books.html")
+
+		amount = (datetime.date.today() - Transaction.objects.filter(book=book, member=member, action='issue').last().date).days * 5
+
+		# making the book available to issue again
+		book.member = None
+		book.save()
+
+		# validating if transactions doesn't happen
+		try:
+			Transaction.objects.create(member=member, book=book, action="return")
+		except IntegrityError:
+			messages.error(request, "Transaction did not complete. Try again!")
+			return render(request, "issue_books.html")
+
+		messages.success(request, f"{username} returned the book successfully.")
+
 
 	return render(request, "issue_books.html")
