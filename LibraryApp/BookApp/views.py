@@ -1,4 +1,5 @@
 import json
+import datetime
 import requests
 from .models import Member, Book, Transaction
 from django.urls import reverse
@@ -116,6 +117,17 @@ def issuebooks(request):
 			messages.error(request, f"No books with {isbn} number are available in database.")
 			return render(request, "issue_books.html")
 		
+		# checking if members outstanding debt is higher than 500
+		debt = 0
+		issued_books = member.book_set.all() # getting all the issued books by the member
+		for ib in issued_books:
+			issue_date = Transaction.objects.get(member=member, book=ib, action="issue").date
+			debt += (datetime.date.today() - issue_date).days * 5 # changes per day for a book is 5 ruppees
+			if debt >= 500:
+				messages.error(request, 
+					f"{username}'s outstanding debt higher than 500 ruppees. To issue the book please return/re-issue the books that are already issued")
+				return render(request, "issue_books.html")
+
 		# assigning this book to the given member
 		book.member = member
 		book.save()
