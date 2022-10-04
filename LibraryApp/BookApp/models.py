@@ -25,6 +25,7 @@ class Transaction(models.Model):
 	book = models.ForeignKey(Book, on_delete=models.PROTECT)
 	date = models.DateField(default=datetime.date.today)
 	action = models.CharField(max_length=20)
+	fees = models.CharField(max_length=20, blank=True)
 
 	def __str__(self):
 		if self.action == 'issue':

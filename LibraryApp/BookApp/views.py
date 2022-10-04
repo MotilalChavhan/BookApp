@@ -168,6 +168,7 @@ def returnbooks(request):
 			return render(request, "issue_books.html")
 
 		amount = (datetime.date.today() - Transaction.objects.filter(book=book, member=member, action='issue').last().date).days * 5
+		messages.info(request, amount)
 
 		# making the book available to issue again
 		book.member = None
@@ -175,12 +176,12 @@ def returnbooks(request):
 
 		# validating if transactions doesn't happen
 		try:
-			Transaction.objects.create(member=member, book=book, action="return")
+			Transaction.objects.create(member=member, book=book, action="return", fees=amount)
 		except IntegrityError:
 			messages.error(request, "Transaction did not complete. Try again!")
 			return render(request, "issue_books.html")
 
-		messages.success(request, f"{username} returned the book successfully.")
+		# messages.success(request, f"{username} returned the book successfully.")
 
 
 	return render(request, "issue_books.html")

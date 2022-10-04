@@ -6,10 +6,26 @@
 	<!-- alert message -->
 	{% if messages %}
 		{% for message in messages %}
+			{% if message.tags == 'alert-info' %}
+			<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+			<script>
+				swal("You have to pay {{ message }}. Click on Pay to proceed.", {
+					button: "Pay",
+					icon:"info"
+				}).then((value) => {
+					if (value) {
+						swal("Paid", "The Amount of {{ message }} is paid", "success");
+						return true;
+					}
+					return false;
+				});
+			</script>
+			{% else %}
 			<div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
 				<div>{{ message }}</div>
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
+			{% endif %}
 		{% endfor %}
 	{% endif %}
 	<h2>Issue a book</h2>
