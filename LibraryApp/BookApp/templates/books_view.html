@@ -16,6 +16,9 @@
 {% block body %}
 
 <!-- <div id="liveAlertPlaceholder"></div> -->
+<h1>Import Books via API</h1>
+
+<p>To add a book that is not present through the API, go to <a href="{% url 'addbook' %}">addbook</a> page.</p>
 
 <form action="{% url 'getbooks' %}" method="post" class="row g-3">
 	{% csrf_token %}

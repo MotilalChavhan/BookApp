@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<center>
+  <!-- alert message -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+        <div>{{ message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <h1>Add a Book</h1>
+  <br>
+
+  <div class="card" style="width: 50%;">
+    <img src="https://as1.ftcdn.net/v2/jpg/05/30/78/48/1000_F_530784876_tVVLgkCNenjbjs8nNIucVZDN9YLoePdI.jpg" class="card-img-top" alt="book shelf image">
+    <div class="card-body">
+      <form action="{% url 'addbook' %}" method="post" class="row g-3">
+          {% csrf_token %}
+          <div class="col-sm-12">
+            <input type="text" class="form-control" name="title" placeholder="Book Title" required>
+          </div>
+
+          <div class="col-sm-12">
+            <input type="text" class="form-control" name="authors" placeholder="Author's" required>
+          </div>
+
+          <div class="col-sm-12">
+            <input type="text" class="form-control" name="isbn" placeholder="ISBN" required>
+          </div>
+
+          <div class="col-sm-12">
+            <input type="text" class="form-control" name="publisher" placeholder="Publisher" required>
+          </div>
+
+          <div class="col-sm-12">
+            <input type="number" class="form-control" min=1 name="stock" placeholder="Stock" required>
+          </div>
+
+          <p>Note: For mutiple author's separate them with forward slash (/).</p>
+
+          <div class="col-sm-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-success" id="addmembers">Add a book</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</center>
+{% endblock %}

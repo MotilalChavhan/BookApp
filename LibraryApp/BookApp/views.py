@@ -13,6 +13,37 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 def landing(request):
 	return render(request, "landing.html")
 
+def addbook(request):
+	if request.method == "POST":
+		title = request.POST['title'].strip()
+		authors = request.POST['authors'].strip()
+		isbn = request.POST['isbn'].strip()
+		publisher = request.POST['publisher'].strip()
+		stock = request.POST['stock'].strip()
+
+		# Checking if any field is blank
+		if len(title) == 0 or len(authors) == 0 or len(isbn) == 0 or len(publisher) == 0 or len(stock) == 0:
+			messages.error(request, "Don't leave any field blank.")
+			return render(request, "add_book.html")
+		
+		# Checking if stock is a positive number
+		if int(stock) < 0:
+			messages.error(request, "Stock value should be greater than zero.")
+			return render(request, "add_book.html")
+
+		# adding a book in database
+		try:
+			for i in range(int(stock)):
+				Book.objects.create(title=title, authors=authors, isbn=isbn, publisher=publisher)
+		except IntegrityError:
+			messages.error(request, "Error occured. Please try again")
+			return render(request, "add_book.html")
+
+		messages.success(request, "You have successfully added a new book in Book database.")
+		return render(request, "add_book.html")
+	
+	return render(request, "add_book.html")
+
 def getbooks(request):
 	if request.method == "GET":
 		return render(request, "books_view.html")
@@ -89,7 +120,7 @@ def addmembers(request):
 			messages.error(request, "username/email already exists. Enter a different username/email.")
 			return render(request, "members_view.html")
 
-		messages.success(request, "You have successfully added a new member in your database.")
+		messages.success(request, "You have successfully added a new member in Member database.")
 		return render(request, "members_view.html")
 	return render(request, "members_view.html")
 
@@ -121,7 +152,7 @@ def issuebooks(request):
 		debt = 0
 		issued_books = member.book_set.all() # getting all the issued books by the member
 		for ib in issued_books:
-			issue_date = Transaction.objects.get(member=member, book=ib, action="issue").date
+			issue_date = Transaction.objects.filter(member=member, book=ib, action="issue").last().date
 			debt += (datetime.date.today() - issue_date).days * 5 # charges per day for a book is 5
 			if debt >= 500:
 				messages.error(request, 
