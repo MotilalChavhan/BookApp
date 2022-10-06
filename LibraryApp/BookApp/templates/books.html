@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- alert message -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+      <div>{{ message }}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form action="{% url 'books' %}" method="post">
+	{% csrf_token %}
+	<div class="mb-3">
+	  <label class="form-label">Book Title</label>
+	  <input type="text" class="form-control" name="title" placeholder="Book Title">
+	</div>
+	<div class="mb-3">
+	  <label class="form-label">Authors (separate multiple authors by forward slash(/).)</label>
+	  <input type="text" class="form-control" name="authors" placeholder="Authors">
+	</div>
+	<div class="d-flex justify-content-end">
+		<button type="submit" class="btn btn-light">Search</button>
+	</div>
+</form>
+<br>
+{% if books %}
+<table class="table table-striped shadow">
+	<thead>
+    <tr>
+    	<th scope="col">ID</th>
+      <th scope="col">Book Title</th>
+      <th scope="col">Authors</th>
+      <th scope="col">ISBN</th>
+      <th scope="col">Publisher</th>
+      <th scope="col">Issued by</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+    <tr>
+    	<td>{{ book.id }}</td>
+      <td>{{ book.title }}</td>
+      <td>{{ book.authors }}</td>
+      <td>{{ book.isbn }}</td>
+      <td>{{ book.publisher }}</td>
+      {% if book.member.username %}
+      <td>{{ book.member.username }}</td>
+      {% else %}
+      <td>--</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

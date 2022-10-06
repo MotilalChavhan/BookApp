@@ -214,5 +214,35 @@ def returnbooks(request):
 
 		# messages.success(request, f"{username} returned the book successfully.")
 
-
 	return render(request, "issue_books.html")
+
+def books(request):
+	if request.method == "POST":
+		title = request.POST['title'].strip()
+		authors = request.POST['authors'].strip()
+
+		# Checking if any field is blank
+		if len(title) == 0 and len(authors) == 0:
+			messages.error(request, "Don't leave the fields blank.")
+			return render(request, "books.html")
+
+		# storing all the records in books
+		try:
+			books = Book.objects.filter(title__icontains=title, authors__icontains=authors)
+		except IntegrityError:
+			messages.error(request, "Internal server error. Try again!")
+			return render(request, "books.html")
+
+		# if no books exists in the database for the entered query
+		if len(books) == 0:
+			messages.warning(request, "Book doesn't exist in the database.")
+			return render(request, "books.html")
+
+		return render(request, "books.html", {
+			"books" : books
+		})
+
+	return render(request, "books.html")
+
+def members(request):
+	return render(request, "members.html")
