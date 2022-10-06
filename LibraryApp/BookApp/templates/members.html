@@ -1,1 +1,59 @@
 {% extends "layout.html" %}
+
+{% block body %}
+
+<!-- alert message -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+      <div>{{ message }}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form action="{% url 'members' %}" method="post" class="row g-3">
+	{% csrf_token %}
+	<div class="col-sm-6">
+	  <label class="form-label">First Name</label>
+	  <input type="text" class="form-control" name="first_name" placeholder="First Name">
+	</div>
+	<div class="col-sm-6">
+	  <label class="form-label">Last Name</label>
+	  <input type="text" class="form-control" name="last_name" placeholder="Last Name">
+	</div>
+	<div class="col-sm-12">
+	  <label class="form-label">Username</label>
+	  <input type="text" class="form-control" name="username" placeholder="Username">
+	</div>
+	<div class="d-flex justify-content-end">
+		<button type="submit" class="btn btn-light">Search</button>
+	</div>
+</form>
+<br>
+{% if members %}
+<table class="table table-striped shadow">
+	<thead>
+    <tr>
+    	<th scope="col">ID</th>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
+      <th scope="col">Username</th>
+      <th scope="col">Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for member in members %}
+    <tr>
+    	<td>{{ member.id }}</td>
+      <td>{{ member.first_name }}</td>
+      <td>{{ member.last_name }}</td>
+      <td>{{ member.username }}</td>
+      <td>{{ member.email }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

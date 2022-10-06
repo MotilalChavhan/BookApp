@@ -245,4 +245,30 @@ def books(request):
 	return render(request, "books.html")
 
 def members(request):
+	if request.method == "POST":
+		first_name = request.POST['first_name'].strip()
+		last_name = request.POST['last_name'].strip()
+		username = request.POST['username'].strip()
+
+		# Checking if any field is blank
+		if len(first_name) == 0 and len(last_name) == 0 and len(username) == 0 and len(email) == 0:
+			messages.error(request, "Don't leave the fields blank.")
+			return render(request, "members.html")
+
+		# storing all the records in books
+		try:
+			members = Member.objects.filter(first_name__icontains=first_name, last_name__icontains=last_name, username__icontains=username)
+		except IntegrityError:
+			messages.error(request, "Internal server error. Try again!")
+			return render(request, "members.html")
+
+		# if no books exists in the database for the entered query
+		if len(members) == 0:
+			messages.warning(request, "Book doesn't exist in the database.")
+			return render(request, "members.html")
+
+		return render(request, "members.html", {
+			"members" : members
+		})
+
 	return render(request, "members.html")
