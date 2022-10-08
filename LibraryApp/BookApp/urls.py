@@ -11,5 +11,6 @@ urlpatterns = [
 	path("returnbooks", views.returnbooks, name="returnbooks"),
 	path("getbooks", views.getbooks, name="getbooks"),
 	path("books", views.books, name="books"),
-	path("members", views.members, name="members")
+	path("members", views.members, name="members"),
+	path("delete", views.delete, name="delete")
 ]

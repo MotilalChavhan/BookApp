@@ -37,25 +37,69 @@
       <th scope="col">ISBN</th>
       <th scope="col">Publisher</th>
       <th scope="col">Issued by</th>
+      <th scope="col">Delete</th>
     </tr>
   </thead>
   <tbody>
     {% for book in books %}
+    {% if book.member.username %}
     <tr>
     	<td>{{ book.id }}</td>
       <td>{{ book.title }}</td>
       <td>{{ book.authors }}</td>
       <td>{{ book.isbn }}</td>
       <td>{{ book.publisher }}</td>
-      {% if book.member.username %}
       <td>{{ book.member.username }}</td>
-      {% else %}
+      <td></td>
+    {% else %}
+    <tr class="delete">
+    	<td>{{ book.id }}</td>
+      <td>{{ book.title }}</td>
+      <td>{{ book.authors }}</td>
+      <td>{{ book.isbn }}</td>
+      <td>{{ book.publisher }}</td>
       <td>--</td>
-      {% endif %}
+      <td>
+      	<button type="button" class="btn btn-danger">Delete</button>
+      </td>
+    {% endif %}
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endif %}
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+	dels = document.querySelectorAll('.delete')
+	for (let i = 0; i < dels.length; i++) {
+	  dels[i].addEventListener('click', () => {
+		  swal({
+			  title: "Are you sure?",
+			  text: "Once deleted, you will not be able to recover this book's data!",
+			  icon: "warning",
+			  buttons: true,
+			  dangerMode: true,
+			}).then((willDelete) => {
+			  if (willDelete) {
+			    let callURL = `${document.location.protocol}//${document.location.host}/delete`;
+			    axios.defaults.xsrfCookieName = 'csrftoken'
+			    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+			    axios.post(callURL, {
+			    	"data" : dels[i].innerText
+			    })
+			    swal("Poof! This book's data is vanished!", {
+			      icon: "success",
+			    }).then((res) => {
+			    	if (res) {
+			    		location.reload();
+			    	}
+			    });
+			  } 
+			  else {
+			    swal("This book's data is safe!");
+			  }
+			});
+	  })
+	}	
+</script>
 {% endblock %}

@@ -75,7 +75,7 @@ def addbooks(request):
 	if request.method == 'GET':
 		return HttpResponseRedirect(reverse("getbooks"))
 	
-	# Getting information from frontend about the books and stocks thats needed to add in db
+	# Getting information from frontend about the books and stocks that needs to be added in db
 	data = json.load(request)
 	books = data["books"]
 	stocks = data["stocks"] # No. of books to enter with same book details
@@ -199,6 +199,8 @@ def returnbooks(request):
 			return render(request, "issue_books.html")
 
 		amount = (datetime.date.today() - Transaction.objects.filter(book=book, member=member, action='issue').last().date).days * 5
+		if amount < 0:
+			messages.success(request, f"{username} returned the book successfully")
 		messages.info(request, amount)
 
 		# making the book available to issue again
@@ -242,7 +244,10 @@ def books(request):
 			"books" : books
 		})
 
-	return render(request, "books.html")
+	books = Book.objects.all()
+	return render(request, "books.html", {
+		"books" : books
+	})
 
 def members(request):
 	if request.method == "POST":
@@ -271,4 +276,15 @@ def members(request):
 			"members" : members
 		})
 
-	return render(request, "members.html")
+	members = Member.objects.all()
+	return render(request, "members.html", {
+		"members" : members
+	})
+
+def delete(request):
+	if request.method == "POST":
+		book = json.load(request)
+		bookid = book['data'].split('\t')[0]
+		res = Book.objects.get(pk=bookid)
+		res.delete()
+	return HttpResponseRedirect(reverse("books"))
