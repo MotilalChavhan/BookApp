@@ -269,7 +269,7 @@ def members(request):
 
 		# if no books exists in the database for the entered query
 		if len(members) == 0:
-			messages.warning(request, "Book doesn't exist in the database.")
+			messages.warning(request, "Member doesn't exist in the database.")
 			return render(request, "members.html")
 
 		return render(request, "members.html", {
@@ -349,7 +349,7 @@ def editmember(request, member_id):
 			messages.error(request, f"Member with {member.id} ID doesn't exist.")
 			return HttpResponseRedirect(reverse("members"))
 
-		member.first_name = request.POST['last_name'].strip()
+		member.first_name = request.POST['first_name'].strip()
 		member.last_name = request.POST['last_name'].strip()
 		member.username = request.POST['username'].strip()
 		member.email = request.POST['email'].strip()
