@@ -298,12 +298,18 @@ def deletebook(request):
 
 def editbook(request, book_id):
 	if request.method == "POST":
-		bookid = request.POST['id']
-		book = Book.objects.get(pk=bookid)
-		book.title = request.POST['title']
-		book.authors = request.POST['authors']
-		book.isbn = request.POST['isbn']
-		book.publisher = request.POST['publisher']
+		bookid = request.POST['id'].strip()
+		# if book doesn't exists redirect to /books path
+		try:
+			book = Book.objects.get(pk=bookid)
+		except:
+			messages.error(request, f"Book with {bookid} ID doesn't exists.")
+			return HttpResponseRedirect(reverse("books"))
+
+		book.title = request.POST['title'].strip()
+		book.authors = request.POST['authors'].strip()
+		book.isbn = request.POST['isbn'].strip()
+		book.publisher = request.POST['publisher'].strip()
 		book.save()
 		messages.success(request, "You have successfully updated the book details.")
 		return HttpResponseRedirect(reverse("books"))
@@ -332,3 +338,107 @@ def deletemember(request):
 		return JsonResponse({"status" : "success"})
 
 	return HttpResponseRedirect(reverse("members"))
+
+def editmember(request, member_id):
+	if request.method == "POST":
+		memberid = request.POST['id'].strip()
+		# if member doesn't exists redirect to /members path
+		try:
+			member = Member.objects.get(pk=memberid)
+		except:
+			messages.error(request, f"Member with {member.id} ID doesn't exist.")
+			return HttpResponseRedirect(reverse("members"))
+
+		member.first_name = request.POST['last_name'].strip()
+		member.last_name = request.POST['last_name'].strip()
+		member.username = request.POST['username'].strip()
+		member.email = request.POST['email'].strip()
+		# Validating email
+		try:
+			validate_email(member.email)
+		except ValidationError:
+			messages.error(request, "Enter a valid email.")
+			return HttpResponseRedirect(reverse("editmember", args=[memberid]))
+
+		# if username/email already exists
+		try:
+			member.save()
+		except IntegrityError:
+			messages.error(request, "username/email already exists. Enter a different username/email")
+			return HttpResponseRedirect(reverse("editmember", args=[memberid]))
+
+		messages.success(request, "You have successfully updated the member details.")
+		return HttpResponseRedirect(reverse("members"))
+
+	# if member doesn't exists redirect to /members path
+	try:
+		member = Member.objects.get(pk=member_id)
+	except:
+		return HttpResponseRedirect(reverse("members"))
+
+	return render(request, "editmember.html", {
+		"member" : member
+	})
+
+def transactions(request):
+	if request.method == "POST":
+		username = request.POST['member'].strip()
+		isbn = request.POST['book'].strip()
+		action = request.POST['action']
+
+		if len(username) == 0 and len(isbn) == 0:
+			if action == "issue/return":
+				return HttpResponseRedirect(reverse("transactions"))
+			transactions = Transaction.objects.filter(action=action)
+			return render(request, "transactions.html", {
+				"transactions" : transactions
+			})
+
+		if len(isbn):
+			# Checking if book doesn't exists
+			try:
+				book = Book.objects.get(isbn=isbn)
+			except:
+				messages.error(request, "Book doesn't exists in the database.")
+				return render(request, "transactions.html")
+			if len(username) == 0:
+				if action == "issue/return":
+					transactions = Transaction.objects.filter(book=book)
+				else:
+					transactions = Transaction.objects.filter(book=book, action=action)
+
+				return render(request, "transactions.html", {
+					"transactions" : transactions
+				})
+
+
+		if len(username):
+			# Checking if member doesn't exists
+			try:
+				member = Member.objects.get(username=username)
+			except:
+				messages.error(request, "Member doesn't exists in the database")
+				return render(request, "transactions.html")
+			if len(isbn) == 0:
+				if action == "issue/return":
+					transactions = Transaction.objects.filter(member=member)
+				else:
+					transactions = Transaction.objects.filter(member=member, action=action)
+
+				return render(request, "transactions.html", {
+					"transactions" : transactions
+				})
+
+		if action == "issue/return":
+			transactions = Transaction.objects.filter(book=book, member=member)
+		else:
+			transactions = Transaction.objects.filter(book=book, member=member, action=action)
+
+		return render(request, "transactions.html", {
+			"transactions" : transactions
+		})
+
+	transactions = Transaction.objects.all()
+	return render(request, "transactions.html", {
+		"transactions" : transactions
+	})

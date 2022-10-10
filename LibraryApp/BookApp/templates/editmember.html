@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<!-- alert message -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+      <div>{{ message }}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form action="{% url 'editmember' member.id %}" method="post" class="row g-3">
+  {% csrf_token %}
+  <div class="col-sm-12">
+  	<label class="form-label">Member ID</label>
+  	<input class="form-control" type="text" name="id" value="{{ member.id }}" aria-label="readonly input example" readonly>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">First Name</label>
+    <input type="text" class="form-control" name="first_name" value="{{ member.first_name }}" placeholder="First Name" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Last Name</label>
+    <input type="text" class="form-control" name="last_name" value="{{ member.last_name }}" placeholder="Last Name" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Username</label>
+    <input type="text" class="form-control" name="username" value="{{ member.username }}" placeholder="Username" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Email</label>
+    <input type="email" class="form-control" name="email" value="{{ member.email }}" placeholder="Email" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Issued Books</label>
+  	{% if member.book_set.all %}
+    <ul>
+      {% for book in member.book_set.all %}
+      <li>{{ book.id }} - {{ book.title }}</li>
+      {% endfor %}
+    </ul>
+  	{% else %}
+  	<li>No books issued by {{ member.username }}</li>
+  	{% endif %}
+  </div>
+
+  <div class="col-sm-12 d-flex justify-content-end">
+    <button type="submit" class="btn btn-success" id="updatemember">Update member</button>
+  </div>
+
+</form>
+
+{% endblock %}

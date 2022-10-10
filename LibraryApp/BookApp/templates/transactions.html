@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- alert message -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible d-flex align-items-center" role="alert">
+      <div>{{ message }}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form action="{% url 'transactions' %}" method="post" class="row g-3">
+	{% csrf_token %}
+	<div class="col-sm-12">
+	  <label class="form-label">Member's Username</label>
+	  <input type="text" class="form-control" name="member" placeholder="Member's Username">
+	</div>
+	<div class="col-sm-9">
+	  <label class="form-label">Book ISBN</label>
+	  <input type="text" class="form-control" name="book" placeholder="Book ISBN">
+	</div>
+	<div class="col-sm-3">
+	  <label class="form-label">Action</label>
+    <select class="form-select" name="action" aria-label="Default select example">
+      <option selected>issue/return</option>
+      <option value="issue">issue</option>
+      <option value="return">return</option>
+    </select>
+	</div>
+	<div class="d-flex justify-content-end">
+		<button type="submit" class="btn btn-light">Search</button>
+	</div>
+</form>
+<br>
+{% if transactions %}
+<table class="table table-striped shadow">
+	<thead>
+    <tr>
+    	<th scope="col">ID</th>
+      <th scope="col">Member</th>
+      <th scope="col">Book</th>
+      <th scope="col">ISBN</th>
+      <th scope="col">Date</th>
+      <th scope="col">Action</th>
+      <th scope="col">Fees</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for transaction in transactions %}
+    <tr>
+    	<td>{{ transaction.id }}</td>
+      <td>{{ transaction.member.username }}</td>
+      <td>{{ transaction.book.title }}</td>
+      <td>{{ transaction.book.isbn }}</td>
+      <td>{{ transaction.date }}</td>
+      <td>{{ transaction.action }}</td>
+      <td>{{ transaction.fees }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
