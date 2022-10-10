@@ -109,12 +109,20 @@
 			    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 			    axios.post(callURL, {
 			    	"data" : dels[i].innerText
-			    })
-			    swal("Poof! This book's data is vanished!", {
-			      icon: "success",
 			    }).then((res) => {
-			    	if (res) {
-			    		location.reload();
+			    	if (res.data.status == 'success') {
+					    swal("Poof! This book's data is vanished!", {
+					      icon: "success",
+					    }).then((res) => {
+					    	if (res) {
+					    		location.reload();
+					    	}
+					    })	
+			    	}
+			    	else {
+			    		swal("Unable to delete book record. Try again!", {
+			    			icon: "error",
+			    		});
 			    	}
 			    });
 			  } 

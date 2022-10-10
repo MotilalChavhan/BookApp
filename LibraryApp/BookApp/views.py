@@ -230,7 +230,7 @@ def books(request):
 
 		# storing all the records in books
 		try:
-			books = Book.objects.filter(title__icontains=title, authors__icontains=authors)
+			books = Book.objects.filter(title__icontains=title, authors__icontains=authors).exclude(title='deleted')
 		except IntegrityError:
 			messages.error(request, "Internal server error. Try again!")
 			return render(request, "books.html")
@@ -244,7 +244,7 @@ def books(request):
 			"books" : books
 		})
 
-	books = Book.objects.all()
+	books = Book.objects.all().exclude(title='deleted')
 	return render(request, "books.html", {
 		"books" : books
 	})
@@ -262,7 +262,7 @@ def members(request):
 
 		# storing all the records in books
 		try:
-			members = Member.objects.filter(first_name__icontains=first_name, last_name__icontains=last_name, username__icontains=username)
+			members = Member.objects.filter(first_name__icontains=first_name, last_name__icontains=last_name, username__icontains=username).exclude(username='deleted')
 		except IntegrityError:
 			messages.error(request, "Internal server error. Try again!")
 			return render(request, "members.html")
@@ -276,7 +276,7 @@ def members(request):
 			"members" : members
 		})
 
-	members = Member.objects.all()
+	members = Member.objects.all().exclude(username='deleted')
 	return render(request, "members.html", {
 		"members" : members
 	})
@@ -289,8 +289,10 @@ def deletebook(request):
 			res = Book.objects.get(pk=bookid)
 			res.delete()
 		except:
-			messages.error(request, "Unable to delete book record. Try again!")
+			# messages.error(request, "Unable to delete book record. Try again!")
 			return HttpResponseRedirect(reverse("books"))
+
+		return JsonResponse({"status" : "success"})
 
 	return HttpResponseRedirect(reverse("books"))
 
@@ -315,3 +317,18 @@ def editbook(request, book_id):
 	return render(request, "editbook.html", {
 		"book" : book
 	})
+
+def deletemember(request):
+	if request.method == "POST":
+		member = json.load(request)
+		memberid = member['data'].split('\t')[0]
+		try:
+			res = Member.objects.get(pk=memberid)
+			res.delete()
+		except:
+			# messages.error(request, "Unable to delete member record. Try again!")
+			return HttpResponseRedirect(reverse("members"))
+
+		return JsonResponse({"status" : "success"})
+
+	return HttpResponseRedirect(reverse("members"))

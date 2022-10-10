@@ -40,20 +40,66 @@
       <th scope="col">Last Name</th>
       <th scope="col">Username</th>
       <th scope="col">Email</th>
+      <th scope="col">Delete</th>
+      <!-- <th scope="col">Edit</th> -->
     </tr>
   </thead>
   <tbody>
     {% for member in members %}
-    <tr>
+    <tr class="member">
     	<td>{{ member.id }}</td>
       <td>{{ member.first_name }}</td>
       <td>{{ member.last_name }}</td>
       <td>{{ member.username }}</td>
       <td>{{ member.email }}</td> 
+      <td><button type="button" class="btn btn-danger">Delete</button></td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endif %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+  dels = document.querySelectorAll('.member');
+  btns = document.querySelectorAll('.btn-danger');
+  for (let i = 0; i < dels.length; i++) {
+    btns[i].addEventListener('click', () => {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this member's data!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          let callURL = `${document.location.protocol}//${document.location.host}/deletemember`;
+          axios.defaults.xsrfCookieName = 'csrftoken'
+          axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+          axios.post(callURL, {
+            "data" : dels[i].innerText
+          }).then((res) => {
+            if (res.data.status == 'success') {
+              swal("Poof! This member's data is vanished!", {
+                icon: "success",
+              }).then((res) => {
+                if (res) {
+                  location.reload();
+                }
+              })  
+            }
+            else {
+              swal("Unable to delete member record. Try again!", {
+                icon: "error",
+              });
+            }
+          });
+        } 
+        else {
+          swal("This member's data is safe!");
+        }
+      });
+    })
+  } 
+</script>
 
 {% endblock %}

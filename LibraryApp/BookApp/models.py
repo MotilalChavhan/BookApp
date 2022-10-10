@@ -20,9 +20,15 @@ class Book(models.Model):
 	def __str__(self):
 		return self.title
 
+def get_sentinel_user():
+    return Member.objects.get_or_create(username='deleted')[0]
+
+def get_sentinel_book():
+    return Book.objects.get_or_create(title='deleted')[0]
+
 class Transaction(models.Model):
-	member = models.ForeignKey(Member, on_delete=models.PROTECT)
-	book = models.ForeignKey(Book, on_delete=models.PROTECT)
+	member = models.ForeignKey(Member, null=True, on_delete=models.SET(get_sentinel_user))
+	book = models.ForeignKey(Book, null=True, on_delete=models.SET(get_sentinel_book))
 	date = models.DateField(default=datetime.date.today)
 	action = models.CharField(max_length=20)
 	fees = models.CharField(max_length=20, blank=True)
