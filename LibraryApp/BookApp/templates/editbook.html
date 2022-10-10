@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form action="{% url 'editbook' book.id %}" method="post" class="row g-3">
+  {% csrf_token %}
+  <div class="col-sm-12">
+  	<label class="form-label">Book ID</label>
+  	<input class="form-control" type="text" name="id" value="{{ book.id }}" aria-label="readonly input example" readonly>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Book Title</label>
+    <input type="text" class="form-control" name="title" value="{{ book.title }}" placeholder="Book Title" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Author's</label>
+    <input type="text" class="form-control" name="authors" value="{{ book.authors }}" placeholder="Author's" required>
+  	<label class="form-label">Note: For mutiple author's separate them with forward slash (/).</label>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">ISBN</label>
+    <input type="text" class="form-control" name="isbn" value="{{ book.isbn }}" placeholder="ISBN" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Publisher</label>
+    <input type="text" class="form-control" name="publisher" value="{{ book.publisher }}" placeholder="Publisher" required>
+  </div>
+
+  <div class="col-sm-12">
+  	<label class="form-label">Issued by</label>
+  	{% if book.member.username %}
+  	<input class="form-control" type="text" value="{{ book.member.username }}" aria-label="readonly input example" readonly>
+  	{% else %}
+  	<input class="form-control" type="text" value="--" aria-label="readonly input example" readonly>
+  	{% endif %}
+  </div>
+
+  <div class="col-sm-12 d-flex justify-content-end">
+    <button type="submit" class="btn btn-success" id="updatebook">Update book</button>
+  </div>
+
+</form>
+
+{% endblock %}

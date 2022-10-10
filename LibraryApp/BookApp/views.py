@@ -199,7 +199,7 @@ def returnbooks(request):
 			return render(request, "issue_books.html")
 
 		amount = (datetime.date.today() - Transaction.objects.filter(book=book, member=member, action='issue').last().date).days * 5
-		if amount < 0:
+		if amount <= 0:
 			messages.success(request, f"{username} returned the book successfully")
 		messages.info(request, amount)
 
@@ -281,10 +281,37 @@ def members(request):
 		"members" : members
 	})
 
-def delete(request):
+def deletebook(request):
 	if request.method == "POST":
 		book = json.load(request)
 		bookid = book['data'].split('\t')[0]
-		res = Book.objects.get(pk=bookid)
-		res.delete()
+		try:
+			res = Book.objects.get(pk=bookid)
+			res.delete()
+		except:
+			messages.error(request, "Unable to delete book record. Try again!")
+			return HttpResponseRedirect(reverse("books"))
+
 	return HttpResponseRedirect(reverse("books"))
+
+def editbook(request, book_id):
+	if request.method == "POST":
+		bookid = request.POST['id']
+		book = Book.objects.get(pk=bookid)
+		book.title = request.POST['title']
+		book.authors = request.POST['authors']
+		book.isbn = request.POST['isbn']
+		book.publisher = request.POST['publisher']
+		book.save()
+		messages.success(request, "You have successfully updated the book details.")
+		return HttpResponseRedirect(reverse("books"))
+
+	# if book doesn't exists redirect to /books path
+	try:
+		book = Book.objects.get(pk=book_id)
+	except:
+		return HttpResponseRedirect(reverse("books"))
+
+	return render(request, "editbook.html", {
+		"book" : book
+	})
