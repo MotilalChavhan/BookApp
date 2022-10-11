@@ -39,3 +39,38 @@ Go to 127.0.0.1:8000 on your browser.
 
 ## Overview
 
+Landing page
+
+![landing page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/landing.gif)
+
+Import Books via [frappe API](https://frappe.io/api/method/frappe-library)
+
+![import books](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/importBooks.gif)
+
+Add Book page
+
+![add book page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/addbook.gif)
+
+Add Member page
+
+![add member page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/addmember.gif)
+
+Issue/Return page
+
+![issue/return page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/issueReturn.gif)
+
+Outstanding Debt Example
+
+![outstanding debt example](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/outstandingDebt.gif)
+
+Books page (search, delete, edit)
+
+![books page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/books.gif)
+
+Members page (search, delete, edit)
+
+![members page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/members.gif)
+
+Transactions page
+
+![transactions page](https://raw.githubusercontent.com/MotilalChavhan/BookApp/main/gifs/transactions.gif)
